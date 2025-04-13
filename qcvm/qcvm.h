@@ -21,273 +21,295 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
+ *
  ******************************************************************************/
 
-/* guard */
+ /* guard */
 #pragma once
 #ifndef _QCVM_H_
 #define _QCVM_H_
+
+#define BUILDING_QCVM_DLL
+
+#ifdef _WIN32
+#ifdef BUILDING_QCVM_DLL
+#define QCVM_API __declspec(dllexport)
+#else
+#define QCVM_API __declspec(dllimport)
+#endif
+#else
+#define QCVM_API
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/*
- *
- * types
- *
- */
-
-/* qcvm runtime */
-typedef struct qcvm_runtime qcvm_t;
-
-/* var type */
-typedef enum qcvm_var_type_t
-{
-	QCVM_VAR_VOID,
-	QCVM_VAR_STRING,
-	QCVM_VAR_FLOAT,
-	QCVM_VAR_VECTOR,
-	QCVM_VAR_ENTITY,
-	QCVM_VAR_FIELD,
-	QCVM_VAR_FUNCTION,
-	QCVM_VAR_POINTER
-} qcvm_var_type_t;
-
-/* export func */
-typedef void (*qcvm_export_func_t)(qcvm_t *);
-
-/* export return type */
-typedef enum qcvm_export_type_t
-{
-	QCVM_VOID,
-	QCVM_FLOAT,
-	QCVM_INT,
-	QCVM_ENTITY,
-	QCVM_STRING,
-	QCVM_VECTOR,
-	QCVM_VARGS
-} qcvm_export_type_t;
-
-/* arg for export */
-typedef struct qcvm_export_arg_t
-{
-	char name[32];
-	qcvm_export_type_t type;
-} qcvm_export_arg_t;
-
-/* export structure */
-typedef struct qcvm_export_t
-{
-	char name[32];
-	qcvm_export_func_t func;
-	qcvm_export_type_t type;
-	int argc;
-	qcvm_export_arg_t args[8];
-} qcvm_export_t;
-
-/* vector */
-typedef struct qcvm_vec3_t
-{
-	float x, y, z;
-} qcvm_vec3_t;
-
-/*
- *
- * functions
- *
- */
-
-/*
- * qcvm_bootstrap.c
- */
-
-/* create qcvm from chunk of memory */
-qcvm_t *qcvm_from_memory(void *memory, size_t size);
-
-/* open progs.dat file and return qcvm runtime handle */
-qcvm_t *qcvm_from_file(const char *filename);
-
-/* destroy qcvm runtime handle */
-void qcvm_free(qcvm_t *qcvm);
-
-/* get error */
-const char *qcvm_get_error(void);
-
-/*
- * qcvm_entities.c
- */
-
-/* add entity and return id */
-int qcvm_add_entity(qcvm_t *qcvm);
+    /*
+     *
+     * types
+     *
+     */
+
+     /* qcvm runtime */
+    typedef struct qcvm_runtime qcvm_t;
+
+    /* var type */
+    typedef enum qcvm_var_type_t
+    {
+        QCVM_VAR_VOID,
+        QCVM_VAR_STRING,
+        QCVM_VAR_FLOAT,
+        QCVM_VAR_VECTOR,
+        QCVM_VAR_ENTITY,
+        QCVM_VAR_FIELD,
+        QCVM_VAR_FUNCTION,
+        QCVM_VAR_POINTER
+    } qcvm_var_type_t;
+
+    /* export func */
+    typedef void (*qcvm_export_func_t)(qcvm_t*);
+
+    /* export return type */
+    typedef enum qcvm_export_type_t
+    {
+        QCVM_VOID,
+        QCVM_FLOAT,
+        QCVM_INT,
+        QCVM_ENTITY,
+        QCVM_STRING,
+        QCVM_VECTOR,
+        QCVM_VARGS
+    } qcvm_export_type_t;
+
+    /* arg for export */
+    typedef struct qcvm_export_arg_t
+    {
+        char name[32];
+        qcvm_export_type_t type;
+    } qcvm_export_arg_t;
+
+    /* export structure */
+    typedef struct qcvm_export_t
+    {
+        char name[32];
+        qcvm_export_func_t func;
+        qcvm_export_type_t type;
+        int argc;
+        qcvm_export_arg_t args[8];
+    } qcvm_export_t;
+
+    /* vector */
+    typedef struct qcvm_vec3_t
+    {
+        float x, y, z;
+    } qcvm_vec3_t;
+
+    /*
+     *
+     * functions
+     *
+     */
+
+     /*
+      * qcvm_bootstrap.c
+      */
+
+      /* create qcvm from chunk of memory */
+    QCVM_API qcvm_t* qcvm_from_memory(void* memory, size_t size);
+
+    /* open progs.dat file and return qcvm runtime handle */
+    QCVM_API qcvm_t* qcvm_from_file(const char* filename);
+
+    /* destroy qcvm runtime handle */
+    QCVM_API void qcvm_free(qcvm_t* qcvm);
+
+    /* get error */
+    QCVM_API const char* qcvm_get_error(void);
+
+    /*
+     * qcvm_entities.c
+     */
+
+     /* add entity and return id */
+    QCVM_API int qcvm_add_entity(qcvm_t* qcvm);
 
-/*
- * qcvm_exports.c
- */
+    /*
+     * qcvm_exports.c
+     */
 
-/* add an argument to export */
-void qcvm_add_export_arg(qcvm_export_t *export, const char *name, qcvm_export_type_t type);
+     /* add an argument to export */
+    QCVM_API void qcvm_add_export_arg(qcvm_export_t* _export, const char* name, qcvm_export_type_t type);
 
-/* create new export */
-qcvm_export_t *qcvm_create_export(const char *name, qcvm_export_func_t func, qcvm_export_type_t type);
+    /* create new export */
+    QCVM_API qcvm_export_t* qcvm_create_export(const char* name, qcvm_export_func_t func, qcvm_export_type_t type);
 
-/* free export */
-void qcvm_free_export(qcvm_export_t *export);
+    /* free export */
+    QCVM_API void qcvm_free_export(qcvm_export_t* _export);
 
-/* add export to qcvm */
-void qcvm_add_export(qcvm_t *qcvm, qcvm_export_t *export);
+    /* add export to qcvm */
+    QCVM_API void qcvm_add_export(qcvm_t* qcvm, qcvm_export_t* _export);
 
-/* dump exports to properly formatted qc */
-void qcvm_dump_exports(qcvm_t *qcvm, const char *filename);
+    /* dump exports to properly formatted qc */
+    QCVM_API void qcvm_dump_exports(qcvm_t* qcvm, const char* filename);
 
-/*
- * qcvm_fields.c
- */
+    /*
+     * qcvm_fields.c
+     */
 
-/* get entity field string */
-const char *qcvm_get_field_string(qcvm_t *qcvm, int entity, int field);
+     /* get entity field string */
+    QCVM_API const char* qcvm_get_field_string(qcvm_t* qcvm, int entity, int field);
 
-/* get entity field vector */
-qcvm_vec3_t qcvm_get_field_vector(qcvm_t *qcvm, int entity, int field);
+    /* get entity field vector */
+    QCVM_API qcvm_vec3_t qcvm_get_field_vector(qcvm_t* qcvm, int entity, int field);
 
-/* get entity field float */
-float qcvm_get_field_float(qcvm_t *qcvm, int entity, int field);
+    /* get entity field float */
+    QCVM_API float qcvm_get_field_float(qcvm_t* qcvm, int entity, int field);
 
-/* get entity field int */
-int qcvm_get_field_int(qcvm_t *qcvm, int entity, int field);
+    /* get entity field int */
+    QCVM_API int qcvm_get_field_int(qcvm_t* qcvm, int entity, int field);
 
-/* set entity field vector */
-void qcvm_set_field_vector(qcvm_t *qcvm, int entity, int field, float a, float b, float c);
+    /* get entity field entity */
+    QCVM_API int qcvm_get_field_entity(qcvm_t* qcvm, int entity, int field);
 
-/* set entity field float */
-void qcvm_set_field_float(qcvm_t *qcvm, int entity, int field, float val);
+    /* set entity field vector */
+    QCVM_API void qcvm_set_field_vector(qcvm_t* qcvm, int entity, int field, float a, float b, float c);
 
-/* set entity field int */
-void qcvm_set_field_int(qcvm_t *qcvm, int entity, int field, int val);
+    /* set entity field float */
+    QCVM_API void qcvm_set_field_float(qcvm_t* qcvm, int entity, int field, float val);
 
-/* find entity field by name */
-int qcvm_find_field(qcvm_t *qcvm, const char *name);
+    /* set entity field int */
+    QCVM_API void qcvm_set_field_int(qcvm_t* qcvm, int entity, int field, int val);
 
-/*
- * qcvm_functions.c
- */
+    /* set entity field entity */
+    QCVM_API void qcvm_set_field_entity(qcvm_t* qcvm, int entity, int field, int val);
 
-/* search all functions in the qcvm and return its function number if found */
-int qcvm_find_function(qcvm_t *qcvm, const char *name);
+    /* set entity field string */
+    QCVM_API void qcvm_set_field_string(qcvm_t* qcvm, int entity, int field, const char* val);
 
-/*
- * qcvm_globals.c
- */
+    /* find entity field by name */
+    QCVM_API int qcvm_find_field(qcvm_t* qcvm, const char* name, unsigned short* type);
 
-/* set global entity by number */
-void qcvm_set_global_entity(qcvm_t *qcvm, int global, int entity);
+    /*
+     * qcvm_functions.c
+     */
 
-/* set the global int at the specified offset to the specified value */
-void qcvm_set_global_int(qcvm_t *qcvm, int global, int val);
+     /* search all functions in the qcvm and return its function number if found */
+    QCVM_API int qcvm_find_function(qcvm_t* qcvm, const char* name);
 
-/* set the global float at the specified offset to the specified value */
-void qcvm_set_global_float(qcvm_t *qcvm, int global, float val);
+    /*
+     * qcvm_globals.c
+     */
 
-/* set the global vector at the specified offset to the specified value */
-void qcvm_set_global_vector(qcvm_t *qcvm, int global, float a, float b, float c);
+     /* set global entity by number */
+    QCVM_API void qcvm_set_global_entity(qcvm_t* qcvm, int global, int entity);
 
-/* retrieve global entity */
-int qcvm_get_global_entity(qcvm_t *qcvm, int global);
+    /* set the global int at the specified offset to the specified value */
+    QCVM_API void qcvm_set_global_int(qcvm_t* qcvm, int global, int val);
 
-/* retrieve global int */
-int qcvm_get_global_int(qcvm_t *qcvm, int global);
+    /* set the global float at the specified offset to the specified value */
+    QCVM_API void qcvm_set_global_float(qcvm_t* qcvm, int global, float val);
 
-/* retrieve global float */
-float qcvm_get_global_float(qcvm_t *qcvm, int global);
+    /* set the global vector at the specified offset to the specified value */
+    QCVM_API void qcvm_set_global_vector(qcvm_t* qcvm, int global, float a, float b, float c);
 
-/* retrieve global vector */
-qcvm_vec3_t qcvm_get_global_vector(qcvm_t *qcvm, int global);
+    /* retrieve global entity */
+    QCVM_API int qcvm_get_global_entity(qcvm_t* qcvm, int global);
 
-/* retrieve the offset of a global by name */
-int qcvm_find_global(qcvm_t *qcvm, const char *name);
+    /* retrieve global int */
+    QCVM_API int qcvm_get_global_int(qcvm_t* qcvm, int global);
 
-/* retrieve the offset of a global by name & type */
-int qcvm_find_global_by_type(qcvm_t *qcvm, const char *name, qcvm_export_type_t type);
+    /* retrieve global float */
+    QCVM_API float qcvm_get_global_float(qcvm_t* qcvm, int global);
 
-/* retrieve the offset of a global float by name */
-int qcvm_find_global_float(qcvm_t *qcvm, const char *name);
+    /* retrieve global vector */
+    QCVM_API qcvm_vec3_t qcvm_get_global_vector(qcvm_t* qcvm, int global);
 
-/* retrieve the offset of a global int by name */
-int qcvm_find_global_int(qcvm_t *qcvm, const char *name);
+    /* retrieve the offset of a global by name */
+    QCVM_API int qcvm_find_global(qcvm_t* qcvm, const char* name);
 
-/* retrieve the offset of a global entity by name */
-int qcvm_find_global_entity(qcvm_t *qcvm, const char *name);
+    /* retrieve the offset of a global by name & type */
+    QCVM_API int qcvm_find_global_by_type(qcvm_t* qcvm, const char* name, qcvm_export_type_t type);
 
-/* retrieve the offset of a global string by name */
-int qcvm_find_global_string(qcvm_t *qcvm, const char *name);
+    /* retrieve the offset of a global float by name */
+    QCVM_API int qcvm_find_global_float(qcvm_t* qcvm, const char* name);
 
-/* retrieve the offset of a global vector by name */
-int qcvm_find_global_vector(qcvm_t *qcvm, const char *name);
+    /* retrieve the offset of a global int by name */
+    QCVM_API int qcvm_find_global_int(qcvm_t* qcvm, const char* name);
 
-/*
- * qcvm_parameters.c
- */
+    /* retrieve the offset of a global entity by name */
+    QCVM_API int qcvm_find_global_entity(qcvm_t* qcvm, const char* name);
 
-/* set the specified parameter of the next function call to a string */
-void qcvm_set_parm_string(qcvm_t *qcvm, int parm, const char *s);
+    /* retrieve the offset of a global string by name */
+    QCVM_API int qcvm_find_global_string(qcvm_t* qcvm, const char* name);
 
-/* set the specified parameter of the next function call to a vector */
-void qcvm_set_parm_vector(qcvm_t *qcvm, int parm, float a, float b, float c);
+    /* retrieve the offset of a global vector by name */
+    QCVM_API int qcvm_find_global_vector(qcvm_t* qcvm, const char* name);
 
-/* set the specified parameter of the next function call to an int */
-void qcvm_set_parm_int(qcvm_t *qcvm, int parm, int val);
+    /*
+     * qcvm_parameters.c
+     */
 
-/* set the specified parameter of the next function call to a float */
-void qcvm_set_parm_float(qcvm_t *qcvm, int parm, float val);
+     /* set the specified parameter of the next function call to a string */
+    QCVM_API void qcvm_set_parm_string(qcvm_t* qcvm, int parm, const char* s);
 
-/* get the argument count of the most recently called function */
-int qcvm_get_argc(qcvm_t *qcvm);
+    /* set the specified parameter of the next function call to a vector */
+    QCVM_API void qcvm_set_parm_vector(qcvm_t* qcvm, int parm, float a, float b, float c);
 
-/* retrieve the specified function parameter as an entity id */
-int qcvm_get_parm_entity(qcvm_t *qcvm, int parm);
+    /* set the specified parameter of the next function call to an int */
+    QCVM_API void qcvm_set_parm_int(qcvm_t* qcvm, int parm, int val);
 
-/* retrieve the specified function parameter as a vector */
-qcvm_vec3_t qcvm_get_parm_vector(qcvm_t *qcvm, int parm);
+    /* set the specified parameter of the next function call to a float */
+    QCVM_API void qcvm_set_parm_float(qcvm_t* qcvm, int parm, float val);
 
-/* retrieve the specified function parameter as a string */
-const char *qcvm_get_parm_string(qcvm_t *qcvm, int parm);
+    /* get the argument count of the most recently called function */
+    QCVM_API int qcvm_get_argc(qcvm_t* qcvm);
 
-/* retrieve the specified function parameter as an int */
-int qcvm_get_parm_int(qcvm_t *qcvm, int parm);
+    /* retrieve the specified function parameter as an entity id */
+    QCVM_API int qcvm_get_parm_entity(qcvm_t* qcvm, int parm);
 
-/* retrieve the specified function parameter as a float */
-float qcvm_get_parm_float(qcvm_t *qcvm, int parm);
+    /* retrieve the specified function parameter as a vector */
+    QCVM_API qcvm_vec3_t qcvm_get_parm_vector(qcvm_t* qcvm, int parm);
 
-/*
- * qcvm_return.c
- */
+    /* retrieve the specified function parameter as a string */
+    QCVM_API const char* qcvm_get_parm_string(qcvm_t* qcvm, int parm);
 
-/* return a new entity */
-void qcvm_return_entity(qcvm_t *qcvm, int entity);
+    /* retrieve the specified function parameter as an int */
+    QCVM_API int qcvm_get_parm_int(qcvm_t* qcvm, int parm);
 
-/* return a string to the function that called this one */
-void qcvm_return_string(qcvm_t *qcvm, const char *s);
+    /* retrieve the specified function parameter as a float */
+    QCVM_API float qcvm_get_parm_float(qcvm_t* qcvm, int parm);
 
-/* return a formatted string to the function that called this one */
-void qcvm_return_stringf(qcvm_t *qcvm, const char *s, ...);
+    /*
+     * qcvm_return.c
+     */
 
-/* return a vector to the function that called this one */
-void qcvm_return_vector(qcvm_t *qcvm, float a, float b, float c);
+     /* return a new entity */
+    QCVM_API void qcvm_return_entity(qcvm_t* qcvm, int entity);
 
-/* return an int to the function that called this one */
-void qcvm_return_int(qcvm_t *qcvm, int val);
+    /* return a string to the function that called this one */
+    QCVM_API void qcvm_return_string(qcvm_t* qcvm, const char* s);
 
-/* return a float to the function that called this one */
-void qcvm_return_float(qcvm_t *qcvm, float val);
+    /* return a formatted string to the function that called this one */
+    QCVM_API void qcvm_return_stringf(qcvm_t* qcvm, const char* s, ...);
 
-/*
- * qcvm_runtime.c
- */
+    /* return a vector to the function that called this one */
+    QCVM_API void qcvm_return_vector(qcvm_t* qcvm, float a, float b, float c);
 
-/* execute qcvm runtime loop */
-void qcvm_run(qcvm_t *qcvm, int func);
+    /* return an int to the function that called this one */
+    QCVM_API void qcvm_return_int(qcvm_t* qcvm, int val);
 
-/* guard */
+    /* return a float to the function that called this one */
+    QCVM_API void qcvm_return_float(qcvm_t* qcvm, float val);
+
+    /*
+     * qcvm_runtime.c
+     */
+
+     /* execute qcvm runtime loop */
+    QCVM_API void qcvm_run(qcvm_t* qcvm, int func);
+
+    /* guard */
 #ifdef __cplusplus
 }
 #endif

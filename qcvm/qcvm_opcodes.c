@@ -114,6 +114,9 @@ QCVM_OPCODE_FUNC(_CALL)
 			return;
 		}
 
+		if (qcvm->export_i >= qcvm->num_exports) {
+			return;
+		}
 		qcvm->exports[qcvm->export_i].func(qcvm);
 
 		return;
@@ -483,7 +486,8 @@ QCVM_OPCODE_FUNC(CALL8)
 
 QCVM_OPCODE_FUNC(STATE)
 {
-	QCVM_CALL_OPCODE_FUNC(_NOT_IMPLEMENTED);
+	qcvm->current_frame = qcvm->eval_p[1]->float_;
+	qcvm->nextthink_p = qcvm->eval_p[2]->function;
 }
 
 QCVM_OPCODE_FUNC(GOTO)

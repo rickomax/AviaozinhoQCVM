@@ -58,7 +58,7 @@ set(QCVM_HEADERS
 	${CMAKE_CURRENT_SOURCE_DIR}/qclib/qclib.h
 )
 
-add_library(qcvm ${QCVM_SOURCES})
+add_library(qcvm SHARED ${QCVM_SOURCES})
 target_include_directories(qcvm PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/qcvm)
 
 add_library(qclib ${CMAKE_CURRENT_SOURCE_DIR}/qclib/qclib.c)

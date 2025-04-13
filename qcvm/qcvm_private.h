@@ -327,6 +327,9 @@ struct qcvm_runtime
 	/* memory pool */
 	void *pool;						/* pointer to memory pool */
 	int len_pool;					/* size of memory pool */
+
+	int current_frame; /* index to the current mdl frame */
+	int nextthink_p; /* index to the next think from the state*/
 };
 
 /* qcvm opcodes */

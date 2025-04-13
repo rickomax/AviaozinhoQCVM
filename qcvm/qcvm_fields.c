@@ -69,6 +69,13 @@ int qcvm_get_field_int(qcvm_t *qcvm, int entity, int field)
 	return FIELD_INT(entity, field);
 }
 
+/* get entity field entity */
+int qcvm_get_field_entity(qcvm_t* qcvm, int entity, int field)
+{
+	int byteOffset = FIELD_INT(entity, field);
+	return byteOffset / ENTITY_SIZE;
+}
+
 /* set entity field vector */
 void qcvm_set_field_vector(qcvm_t *qcvm, int entity, int field, float a, float b, float c)
 {
@@ -89,8 +96,31 @@ void qcvm_set_field_int(qcvm_t *qcvm, int entity, int field, int val)
 	FIELD_INT(entity, field) = val;
 }
 
+/* set entity field entity */
+void qcvm_set_field_entity(qcvm_t* qcvm, int entity, int field, int val)
+{
+	FIELD_INT(entity, field) = val * ENTITY_SIZE;
+}
+
+/* set entity field string */
+void qcvm_set_field_string(qcvm_t* qcvm, int entity, int field, const char* val)
+{
+	/* bounds check */
+	if (qcvm->tempstrings_ptr + strlen(val) + 1 > qcvm->tempstrings + TEMPSTRINGS_SIZE)
+		qcvm->tempstrings_ptr = qcvm->tempstrings;
+
+	/* sprintf */
+	sprintf(qcvm->tempstrings_ptr, "%s", val);
+
+	/* return str */
+	FIELD_INT(entity, field) = (qcvm->tempstrings_ptr) - qcvm->strings;
+
+	/* advance ptr */
+	qcvm->tempstrings_ptr += strlen(val) + 1;
+}
+
 /* find entity field by name */
-int qcvm_find_field(qcvm_t *qcvm, const char *name)
+int qcvm_find_field(qcvm_t *qcvm, const char *name, unsigned short* type)
 {
 	/* variables */
 	int i;
@@ -98,8 +128,10 @@ int qcvm_find_field(qcvm_t *qcvm, const char *name)
 	/* search globals */
 	for (i = 1; i < qcvm->header->num_field_vars; i++)
 	{
-		if (strcmp(GET_STRING_OFS(qcvm->field_vars[i].name), name) == 0)
+		if (strcmp(GET_STRING_OFS(qcvm->field_vars[i].name), name) == 0) {
+			*type = qcvm->field_vars[i].type;
 			return qcvm->field_vars[i].ofs;
+		}
 	}
 
 	/* return failure */
